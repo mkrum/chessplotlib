@@ -1,8 +1,10 @@
-import chess
 import copy
+from typing import Tuple
+
+import chess
+import chess.pgn
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Tuple
 
 import matplotlib.patches as patches
 
@@ -22,13 +24,14 @@ symbols = {
 }
 
 
-def from_square(move: chess.Move) -> str:
+def _from_square(move: chess.Move) -> str:
     """
     Converts a move into the from location
     """
     return chess.SQUARE_NAMES[move.from_square]
 
-def to_square(move: chess.Move) -> Tuple[str, str]:
+
+def _to_square(move: chess.Move) -> Tuple[str, str]:
     """
     Converts a move into the to location and promotion
     """
@@ -37,14 +40,15 @@ def to_square(move: chess.Move) -> Tuple[str, str]:
     if move.promotion is not None:
         promotion = chess.PIECE_SYMBOLS[move.promotion]
 
-    return (chess.SQUARE_NAMES[move.from_square], promotion)
+    return (chess.SQUARE_NAMES[move.to_square], promotion)
 
-def square_to_grid(square: str) -> Tuple[int, int]:
+
+def _square_to_grid(square: str) -> Tuple[int, int]:
     row_val = square[0]
     col_val = square[1]
     col = ["8", "7", "6", "5", "4", "3", "2", "1"].index(col_val)
     row = ["a", "b", "c", "d", "e", "f", "g", "h"].index(row_val)
-    return col, row
+    return row, col
 
 
 def make_checkers(ax: plt.Axes):
@@ -59,6 +63,7 @@ def make_checkers(ax: plt.Axes):
     X, Y = np.meshgrid(np.arange(8), np.arange(8))
     checker = (((X + Y) % 2) + 0.3) / 2
     ax.imshow(checker, cmap="Greys", vmax=1.0, vmin=0.0)
+
 
 def add_piece(
     ax: plt.Axes, square: str, piece: str, alpha: float = 1.0, color: str = "black"
@@ -81,7 +86,7 @@ def add_piece(
     color: str
         black or white, controls the color of the piece
     """
-    x.y = square_to_grid(square)
+    x, y = _square_to_grid(square)
     ax.text(
         x,
         y + 0.05,
@@ -96,17 +101,16 @@ def add_piece(
 
 def add_arrow(
     ax: plt.Axes,
-    from_square: str
-    to_square: str
+    from_square: str,
+    to_square: str,
     alpha=1.0,
     color="black",
 ):
     """
     Adds an arrow from one square to the next
     """
-
-    from_x, from_y = square_to_grid(from_square)
-    to_x, to_y = square_to_grid(to_square)
+    from_x, from_y = _square_to_grid(from_square)
+    to_x, to_y = _square_to_grid(to_square)
 
     ax.arrow(
         from_x,
@@ -115,6 +119,7 @@ def add_arrow(
         to_y - from_y,
         alpha=alpha,
         color=color,
+        zorder=3,
         head_width=0.1,
     )
 
@@ -131,9 +136,10 @@ def plot_board(ax, board, checkers=True):
 
     ax.tick_params(labeltop=True, labelright=True, length=0)
 
-    ax.set_yticks(list(range(8)))
+    ax.set_yticks(list(reversed(list(range(8)))))
     ax.set_xticks(list(range(8)))
-    ax.set_yticklabels(("8", "7", "6", "5", "4", "3", "2", "1"))
+
+    ax.set_yticklabels(("1", "2", "3", "4", "5", "6", "7", "8"))
     ax.set_xticklabels(("a", "b", "c", "d", "e", "f", "g", "h"))
 
     if checkers:
@@ -142,17 +148,15 @@ def plot_board(ax, board, checkers=True):
     X, Y = np.meshgrid(np.arange(8), np.arange(8))
     locs = np.stack([X.flatten(), Y.flatten()], axis=1)
 
-    for (i, square) in enumerate(chess.SQUARES_180):
+    for square in chess.SQUARES_180:
         piece = board.piece_at(square)
         if piece:
-            add_piece(ax, chess.SQUARE_NAMES[i], piece.symbol())
+            add_piece(ax, chess.SQUARE_NAMES[square], piece.symbol())
 
 
 def plot_move(ax, board: chess.Board, move: chess.Move, alpha=1.0, color="black"):
-    move = str(move)
-
-    from_square = from_square(move)
-    to_square, promotion = to_square(move)
+    from_square = _from_square(move)
+    to_square, promotion = _to_square(move)
 
     square = chess.SQUARE_NAMES.index(from_square)
     from_piece = board.piece_at(square)
@@ -162,17 +166,17 @@ def plot_move(ax, board: chess.Board, move: chess.Move, alpha=1.0, color="black"
     else:
         to_piece = promotion
 
+    print(to_piece.symbol())
     add_arrow(ax, from_square, to_square, alpha=alpha, color=color)
-    add_piece(ax, to_row, to_col, to_piece, alpha=alpha, color=color)
+    add_piece(ax, to_square, to_piece.symbol(), alpha=alpha, color=color)
 
 
+def mark_square(ax: plt.Axes, square: str):
 
-def mark_square(ax, square: str):
-
-    row, col = square_to_grid(square)
+    row, col = _square_to_grid(square)
 
     rect = patches.Rectangle(
-        (col - 0.5, row - 0.5),
+        (row - 0.5, col - 0.5),
         1.0,
         1.0,
         linewidth=2,
@@ -195,7 +199,6 @@ def mark_move(ax: plt.Axes, move: str):
 
 
 class PGNViewer:
-
     def __init__(self, fig, ax, game):
 
         board = game.board()
@@ -228,7 +231,7 @@ class PGNViewer:
         self.fig.canvas.draw()
 
 
-def pgn_viewer(game: chess.Game):
+def pgn_viewer(game: chess.pgn.Game):
     fig, ax = plt.subplots(1, 1)
     viewer = PGNViewer(fig, ax, game)
     plt.show()
@@ -238,8 +241,7 @@ if __name__ == "__main__":
     board = chess.Board()
     move = np.random.choice(list(board.legal_moves))
     fig, ax = plt.subplots(1, 1)
-
     plot_board(ax, board, checkers=True)
     plot_move(ax, board, move)
-    mark_square(ax, "e1")
+    # mark_square(ax, "e1")
     plt.show()
