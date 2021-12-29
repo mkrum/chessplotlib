@@ -1,0 +1,23 @@
+﻿chessplotlib
+============
+
+.. automodule:: chessplotlib
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

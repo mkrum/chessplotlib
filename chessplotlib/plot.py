@@ -8,7 +8,7 @@ import numpy as np
 
 import matplotlib.patches as patches
 
-symbols = {
+SYMBOLS = {
     "K": "♔",
     "Q": "♕",
     "R": "♖",
@@ -44,6 +44,9 @@ def _to_square(move: chess.Move) -> Tuple[str, str]:
 
 
 def _square_to_grid(square: str) -> Tuple[int, int]:
+    """
+    Converts the string name of the square into the grid location
+    """
     row_val = square[0]
     col_val = square[1]
     col = ["8", "7", "6", "5", "4", "3", "2", "1"].index(col_val)
@@ -78,9 +81,9 @@ def add_piece(
     ax: plt.Axes
         Axes containing board
     square: str
-        String representing the square
+        String representing the square (i.e. "e1")
     piece: str
-        String symbol for the piece
+        String symbol for the piece (i.e. "P")
     alpha: float
         Alpha for the piece, controls piece visibility
     color: str
@@ -90,7 +93,7 @@ def add_piece(
     ax.text(
         x,
         y + 0.05,
-        symbols[piece],
+        SYMBOLS[piece],
         fontsize=32,
         ha="center",
         va="center",
@@ -108,6 +111,22 @@ def add_arrow(
 ):
     """
     Adds an arrow from one square to the next
+
+    Draws an arrow connecting two squares together. Can be used to represent
+    moves.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing board.
+    from_square: str
+        String representing the square to start the arrow (i.e. "e1").
+    to_square: str
+        String representing the square to finish the arrow (i.e. "e4").
+    alpha: float
+        Alpha for the piece, controls piece visibility.
+    color: str
+        Controls the color of the piece, typically black or white.
     """
     from_x, from_y = _square_to_grid(from_square)
     to_x, to_y = _square_to_grid(to_square)
@@ -124,9 +143,18 @@ def add_arrow(
     )
 
 
-def plot_board(ax, board, checkers=True):
-    """
-    Creates a board image on the specified axis
+def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
+    r"""
+    Creates a board image on the specified axis.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes to apply the board to.
+    board: chess.Board
+        Board object to plot.
+    checkers: bool, default=True
+        Whether or not to apply a checker pattern to the background.
     """
     ax.set_xlim([-0.5, 7.5])
     ax.set_ylim([7.5, -0.5])
@@ -154,7 +182,27 @@ def plot_board(ax, board, checkers=True):
             add_piece(ax, chess.SQUARE_NAMES[square], piece.symbol())
 
 
-def plot_move(ax, board: chess.Board, move: chess.Move, alpha=1.0, color="black"):
+def plot_move(
+    ax: plt.Axes,
+    board: chess.Board,
+    move: chess.Move,
+    alpha: float = 1.0,
+    color: str = "black",
+):
+    """
+    Visualizes a move on top of a plotted board.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing the state of the board in which the move with take place
+    move: chess.Move
+        Potential move represented with a chess.Move object
+    alpha: float, default=1.0
+        Alpha value for move visual
+    color: str, default=black
+        Color for move visual
+    """
     from_square = _from_square(move)
     to_square, promotion = _to_square(move)
 
@@ -166,13 +214,21 @@ def plot_move(ax, board: chess.Board, move: chess.Move, alpha=1.0, color="black"
     else:
         to_piece = promotion
 
-    print(to_piece.symbol())
     add_arrow(ax, from_square, to_square, alpha=alpha, color=color)
     add_piece(ax, to_square, to_piece.symbol(), alpha=alpha, color=color)
 
 
 def mark_square(ax: plt.Axes, square: str):
+    """
+    Highlights a square in red.
 
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing the state of the board
+    square: str
+        String name for square, (i.e. e1)
+    """
     row, col = _square_to_grid(square)
 
     rect = patches.Rectangle(
@@ -189,11 +245,20 @@ def mark_square(ax: plt.Axes, square: str):
     ax.add_patch(rect)
 
 
-def mark_move(ax: plt.Axes, move: str):
-    move = MoveRep.from_uci(move)
+def mark_move(ax: plt.Axes, move: chess.Move):
+    """
+    Marks the two squares used in a move
 
-    from_square = move.to_str_list()[0]
-    to_square = move.to_str_list()[1]
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing the state of the board
+    move: chess.Move
+        String name for square, (i.e. e1)
+    """
+    from_square = _from_square(move)
+    to_square, _ = _to_square(move)
+
     mark_square(ax, from_square)
     mark_square(ax, to_square)
 
@@ -243,5 +308,5 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(1, 1)
     plot_board(ax, board, checkers=True)
     plot_move(ax, board, move)
-    # mark_square(ax, "e1")
+    mark_move(ax, move)
     plt.show()
