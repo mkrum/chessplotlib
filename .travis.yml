@@ -8,6 +8,7 @@ env:
 
 script:
     - pip install twine pytest
+    - pip install -e .
     - pytest -s
     - python setup.py sdist bdist_wheel
     - twine check dist/* 
