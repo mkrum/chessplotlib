@@ -8,7 +8,7 @@ setuptools.setup(
     description="Chess plots with matplotlib",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    version="0.1.3",
+    version="0.1.4",
     scripts=["bin/pgn-viewer"],
     packages=setuptools.find_packages(where="chessplotlib"),
     python_requires=">=3",
