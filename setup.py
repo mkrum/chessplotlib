@@ -8,7 +8,8 @@ setuptools.setup(
     description="Chess plots with matplotlib",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    version="0.0.1",
     packages=setuptools.find_packages(where="chessplotlib"),
     python_requires=">=3",
-    install_requires=["matplotlib","numpy"]
+    install_requires=["matplotlib", "numpy", "chess"],
 )

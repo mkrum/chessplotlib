@@ -212,7 +212,7 @@ def plot_move(
     if promotion == "":
         to_piece = from_piece
     else:
-        to_piece = promotion
+        to_piece = chess.Piece.from_symbol(promotion)
 
     add_arrow(ax, from_square, to_square, alpha=alpha, color=color)
     add_piece(ax, to_square, to_piece.symbol(), alpha=alpha, color=color)

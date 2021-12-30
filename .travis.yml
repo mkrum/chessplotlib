@@ -7,7 +7,8 @@ env:
     secure: FY5HUh3UW4B5gd6qYzK8BVZqIpYiEpIN1+F6SkgW1HOOvJxgAkGCGztH/s7H/cn6Q0wG+vKrv9ZZ5H63oENC/NtVln99NMBVUNNrDPe+0Jl+F54oxJGgB/9jTVo6oXLyVg/afBkHM/dYp9nfkm/htfp1PBTGr1gkBXyfCRP/2cb4hpSrIIPuzfpPbPPY4KNvZwb3bru4K4KfoOGwxudp7vn4aOx27wjOzOEUdVFtsBIBqXasMfVnp4m0KnKJjQiMIVjrcAcWmHn3h7SxzA9P0XbkFZdP6G33SIWQjfYjqXDEm/litP9Qfj/tqcID+QORcjrQan7lXuyF9qPoqvic1hWuKbrlUea/2gIAXs2Txfe5VQClR0zLnfrgJYdACTeNU4dmMdhMIMKsbnpA/bBEgOFcsUptl0vQ/VnV4pjmaxaZ913tWqgDfCafnm3VczIG/cGyUjIHK2LWn+i40WpSfw231Ayqzarp9I4bklZeaDNsya0tPXmW7uLAc5Dnh2lgvY+DDFvQ6VJDr4dorkOeMs55vkgg61lLWeIT7Hq93N8LCN1bcujoWWTIuX1h2Y16PBDs1Jq5xFbsgYXGwV2dhkYobTRsIjR6aYE+/EfISds6N9GMMxJSyLB/VP3cT676Xv3BcRK/EMB8+/kLwVEH0MNzphLL88vbjdytG7LNXiM=
 
 script:
-    - pip install twine
+    - pip install twine pytest
+    - pytest -s
     - python setup.py sdist bdist_wheel
     - twine check dist/* 
     - twine upload --skip-existing dist/* -u __token__ -p $PYPI_TOKEN
