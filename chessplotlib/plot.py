@@ -2,7 +2,6 @@ import copy
 from typing import Tuple
 
 import chess
-import chess.pgn
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -24,127 +23,8 @@ SYMBOLS = {
 }
 
 
-def _from_square(move: chess.Move) -> str:
-    """
-    Converts a move into the from location
-    """
-    return chess.SQUARE_NAMES[move.from_square]
-
-
-def _to_square(move: chess.Move) -> Tuple[str, str]:
-    """
-    Converts a move into the to location and promotion
-    """
-
-    promotion = ""
-    if move.promotion is not None:
-        promotion = chess.PIECE_SYMBOLS[move.promotion]
-
-    return (chess.SQUARE_NAMES[move.to_square], promotion)
-
-
-def _square_to_grid(square: str) -> Tuple[int, int]:
-    """
-    Converts the string name of the square into the grid location
-    """
-    row_val = square[0]
-    col_val = square[1]
-    col = ["8", "7", "6", "5", "4", "3", "2", "1"].index(col_val)
-    row = ["a", "b", "c", "d", "e", "f", "g", "h"].index(row_val)
-    return row, col
-
-
-def make_checkers(ax: plt.Axes):
-    """
-    Adds checkers to the board to make it look more natural
-
-    Parameters
-    ----------
-    ax: plt.Axes
-        Axes to add checkers to
-    """
-    X, Y = np.meshgrid(np.arange(8), np.arange(8))
-    checker = (((X + Y) % 2) + 0.3) / 2
-    ax.imshow(checker, cmap="Greys", vmax=1.0, vmin=0.0)
-
-
-def add_piece(
-    ax: plt.Axes, square: str, piece: str, alpha: float = 1.0, color: str = "black"
-):
-    """
-    Adds a pieces to the board.
-
-    Adds the piece, `piece`, at location square on axes ax.
-
-    Parameters
-    ----------
-    ax: plt.Axes
-        Axes containing board
-    square: str
-        String representing the square (i.e. "e1")
-    piece: str
-        String symbol for the piece (i.e. "P")
-    alpha: float
-        Alpha for the piece, controls piece visibility
-    color: str
-        black or white, controls the color of the piece
-    """
-    x, y = _square_to_grid(square)
-    ax.text(
-        x,
-        y + 0.05,
-        SYMBOLS[piece],
-        fontsize=32,
-        ha="center",
-        va="center",
-        alpha=alpha,
-        color=color,
-    )
-
-
-def add_arrow(
-    ax: plt.Axes,
-    from_square: str,
-    to_square: str,
-    alpha=1.0,
-    color="black",
-):
-    """
-    Adds an arrow from one square to the next
-
-    Draws an arrow connecting two squares together. Can be used to represent
-    moves.
-
-    Parameters
-    ----------
-    ax: plt.Axes
-        Axes containing board.
-    from_square: str
-        String representing the square to start the arrow (i.e. "e1").
-    to_square: str
-        String representing the square to finish the arrow (i.e. "e4").
-    alpha: float
-        Alpha for the piece, controls piece visibility.
-    color: str
-        Controls the color of the piece, typically black or white.
-    """
-    from_x, from_y = _square_to_grid(from_square)
-    to_x, to_y = _square_to_grid(to_square)
-
-    ax.arrow(
-        from_x,
-        from_y + 0.05,
-        to_x - from_x,
-        to_y - from_y,
-        alpha=alpha,
-        color=color,
-        zorder=3,
-        head_width=0.1,
-    )
-
-
 def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
-    r"""
+    """
     Creates a board image on the specified axis.
 
     Parameters
@@ -263,50 +143,120 @@ def mark_move(ax: plt.Axes, move: chess.Move):
     mark_square(ax, to_square)
 
 
-class PGNViewer:
-    def __init__(self, fig, ax, game):
+def make_checkers(ax: plt.Axes):
+    """
+    Adds checkers to the board to make it look more natural
 
-        board = game.board()
-        boards = [copy.copy(board)]
-        for move in game.mainline_moves():
-            board.push(move)
-            boards.append(copy.copy(board))
-
-        self.fig = fig
-        self.ax = ax
-        self.boards = boards
-        self.idx = 0
-
-        plot_board(ax, boards[self.idx], checkers=True)
-        self.fig.canvas.mpl_connect("key_press_event", self.press)
-
-    def press(self, event):
-        if event.key == "left":
-            self.idx -= 1
-
-        if event.key == "right":
-            self.idx += 1
-
-        # Don't go out of the list range
-        self.idx = np.clip(self.idx, 0, len(self.boards) - 1)
-
-        self.ax.clear()
-        plot_board(self.ax, self.boards[self.idx], checkers=True)
-        self.fig.canvas.flush_events()
-        self.fig.canvas.draw()
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes to add checkers to
+    """
+    X, Y = np.meshgrid(np.arange(8), np.arange(8))
+    checker = (((X + Y) % 2) + 0.3) / 2
+    ax.imshow(checker, cmap="Greys", vmax=1.0, vmin=0.0)
 
 
-def pgn_viewer(game: chess.pgn.Game):
-    fig, ax = plt.subplots(1, 1)
-    viewer = PGNViewer(fig, ax, game)
-    plt.show()
+def add_piece(
+    ax: plt.Axes, square: str, piece: str, alpha: float = 1.0, color: str = "black"
+):
+    """
+    Adds a pieces to the board.
+
+    Adds the piece, `piece`, at location square on axes ax.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing board
+    square: str
+        String representing the square (i.e. "e1")
+    piece: str
+        String symbol for the piece (i.e. "P")
+    alpha: float
+        Alpha for the piece, controls piece visibility
+    color: str
+        black or white, controls the color of the piece
+    """
+    x, y = _square_to_grid(square)
+    ax.text(
+        x,
+        y + 0.05,
+        SYMBOLS[piece],
+        fontsize=32,
+        ha="center",
+        va="center",
+        alpha=alpha,
+        color=color,
+    )
 
 
-if __name__ == "__main__":
-    board = chess.Board()
-    move = np.random.choice(list(board.legal_moves))
-    fig, ax = plt.subplots(1, 1)
-    plot_board(ax, board, checkers=True)
-    plot_move(ax, board, move)
-    mark_move(ax, move)
-    plt.show()
+def add_arrow(
+    ax: plt.Axes,
+    from_square: str,
+    to_square: str,
+    alpha=1.0,
+    color="black",
+):
+    """
+    Adds an arrow from one square to the next
+
+    Draws an arrow connecting two squares together. Can be used to represent
+    moves.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing board.
+    from_square: str
+        String representing the square to start the arrow (i.e. "e1").
+    to_square: str
+        String representing the square to finish the arrow (i.e. "e4").
+    alpha: float
+        Alpha for the piece, controls piece visibility.
+    color: str
+        Controls the color of the piece, typically black or white.
+    """
+    from_x, from_y = _square_to_grid(from_square)
+    to_x, to_y = _square_to_grid(to_square)
+
+    ax.arrow(
+        from_x,
+        from_y + 0.05,
+        to_x - from_x,
+        to_y - from_y,
+        alpha=alpha,
+        color=color,
+        zorder=3,
+        head_width=0.1,
+    )
+
+
+def _from_square(move: chess.Move) -> str:
+    """
+    Converts a move into the from location
+    """
+    return chess.SQUARE_NAMES[move.from_square]
+
+
+def _to_square(move: chess.Move) -> Tuple[str, str]:
+    """
+    Converts a move into the to location and promotion
+    """
+
+    promotion = ""
+    if move.promotion is not None:
+        promotion = chess.PIECE_SYMBOLS[move.promotion]
+
+    return (chess.SQUARE_NAMES[move.to_square], promotion)
+
+
+def _square_to_grid(square: str) -> Tuple[int, int]:
+    """
+    Converts the string name of the square into the grid location
+    """
+    row_val = square[0]
+    col_val = square[1]
+    col = ["8", "7", "6", "5", "4", "3", "2", "1"].index(col_val)
+    row = ["a", "b", "c", "d", "e", "f", "g", "h"].index(row_val)
+    return row, col
