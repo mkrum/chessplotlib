@@ -41,3 +41,7 @@ ax = plt.gca()
 plot_board(ax, board)
 plot_move(ax, board, opening_move)
 plt.savefig(f"./examples/opening_move.png", transparent=True)
+
+plt.plot(range(8), [2, 3, 2, 3, 2, 3, 2, 3])
+ax.text(0, 4, "chessplotlib", color='red')
+plt.savefig(f"./examples/plotted.png", transparent=True)
