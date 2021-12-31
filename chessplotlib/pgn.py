@@ -5,6 +5,7 @@ import chess.pgn
 
 from chessplotlib import plot_board
 
+
 class PGNViewer:
     def __init__(self, fig, ax, game):
 
