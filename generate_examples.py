@@ -2,11 +2,12 @@
 Generates the baseline examples for use in the tests. If the visuals change,
 this file needs to be re-run to generate new baselines.
 """
+import shutil
 
 import chess
 import numpy as np
 import matplotlib.pyplot as plt
-from chessplotlib import plot_board, plot_move, mark_move
+from chessplotlib import plot_board, plot_move, mark_move, mark_square
 
 with open("test/boards.txt", "r") as bf:
     board_fens = [l.rstrip() for l in bf.readlines()]
@@ -25,3 +26,18 @@ for (i, (board_fen, move_uci)) in enumerate(zip(board_fens, move_ucis)):
     mark_move(ax, move)
     plt.savefig(f"./test/baseline/marked_move_{i}.png")
     plt.cla()
+
+starting_board = board_fens[0]
+opening_move = chess.Move.from_uci(move_ucis[0])
+board = chess.Board(starting_board)
+ax = plt.gca()
+plot_board(ax, board)
+plt.savefig(f"./examples/starting_board.png")
+mark_square(ax, 'e2')
+plt.savefig(f"./examples/starting_board_marked.png")
+
+plt.cla()
+ax = plt.gca()
+plot_board(ax, board)
+plot_move(ax, board, opening_move)
+plt.savefig(f"./examples/opening_move.png")

@@ -24,7 +24,7 @@ SYMBOLS = {
 
 
 def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
-    """
+    r"""
     Creates a board image on the specified axis.
 
     Parameters
@@ -35,6 +35,18 @@ def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
         Board object to plot.
     checkers: bool, default=True
         Whether or not to apply a checker pattern to the background.
+
+    Examples
+    --------
+    >>> import chess
+    >>> from chessplotlib import plot_board
+    >>> import matplotlib.pyplot as plt
+    >>> board = chess.Board()
+    >>> ax = plt.gca()
+    >>> plot_board(ax, board)
+    >>> plt.show()
+
+    .. image:: ../../examples/starting_board.png
     """
     ax.set_xlim([-0.5, 7.5])
     ax.set_ylim([7.5, -0.5])
@@ -69,7 +81,7 @@ def plot_move(
     alpha: float = 1.0,
     color: str = "black",
 ):
-    """
+    r"""
     Visualizes a move on top of a plotted board.
 
     Parameters
@@ -82,6 +94,19 @@ def plot_move(
         Alpha value for move visual
     color: str, default=black
         Color for move visual
+
+    Examples
+    --------
+    >>> import chess
+    >>> from chessplotlib import plot_board, plot_move
+    >>> import matplotlib.pyplot as plt
+    >>> board = chess.Board()
+    >>> ax = plt.gca()
+    >>> plot_board(ax, board)
+    >>> plot_move(ax, board, "e2e4")
+    >>> plt.show()
+
+    .. image:: ../../examples/opening_move.png
     """
     from_square = _from_square(move)
     to_square, promotion = _to_square(move)
@@ -99,7 +124,7 @@ def plot_move(
 
 
 def mark_square(ax: plt.Axes, square: str):
-    """
+    r"""
     Highlights a square in red.
 
     Parameters
@@ -108,6 +133,19 @@ def mark_square(ax: plt.Axes, square: str):
         Axes containing the state of the board
     square: str
         String name for square, (i.e. e1)
+
+    Examples
+    --------
+    >>> import chess
+    >>> from chessplotlib import plot_board, mark_square
+    >>> import matplotlib.pyplot as plt
+    >>> board = chess.Board()
+    >>> ax = plt.gca()
+    >>> plot_board(ax, board)
+    >>> mark_square(ax, "e2")
+    >>> plt.show()
+
+    .. image:: ../../examples/starting_board_marked.png
     """
     row, col = _square_to_grid(square)
 
