@@ -20,11 +20,11 @@ for (i, (board_fen, move_uci)) in enumerate(zip(board_fens, move_ucis)):
     move = chess.Move.from_uci(move_uci)
     ax = plt.gca()
     plot_board(ax, board)
-    plt.savefig(f"./test/baseline/board_{i}.png", transparent=True)
+    plt.savefig(f"./test/baseline/board_{i}.png")
     plot_move(ax, board, move)
-    plt.savefig(f"./test/baseline/move_{i}.png", transparent=True)
+    plt.savefig(f"./test/baseline/move_{i}.png")
     mark_move(ax, move)
-    plt.savefig(f"./test/baseline/marked_move_{i}.png", transparent=True)
+    plt.savefig(f"./test/baseline/marked_move_{i}.png")
     plt.cla()
 
 starting_board = board_fens[0]
