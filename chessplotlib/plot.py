@@ -79,7 +79,9 @@ def plot_move(
     board: chess.Board,
     move: chess.Move,
     alpha: float = 1.0,
-    color: str = "black",
+    color: str = "red",
+    piece_alpha: float = 1.0,
+    piece_color: str = "black",
 ):
     r"""
     Visualizes a move on top of a plotted board.
@@ -120,7 +122,7 @@ def plot_move(
         to_piece = chess.Piece.from_symbol(promotion)
 
     add_arrow(ax, from_square, to_square, alpha=alpha, color=color)
-    add_piece(ax, to_square, to_piece.symbol(), alpha=alpha, color=color)
+    add_piece(ax, to_square, to_piece.symbol(), alpha=piece_alpha, color=piece_color)
 
 
 def mark_square(ax: plt.Axes, square: str):
@@ -260,13 +262,14 @@ def add_arrow(
 
     ax.arrow(
         from_x,
-        from_y + 0.05,
+        from_y,
         to_x - from_x,
         to_y - from_y,
         alpha=alpha,
         color=color,
-        zorder=3,
-        head_width=0.1,
+        zorder=4,
+        head_width=0.15,
+        length_includes_head=True,
     )
 
 

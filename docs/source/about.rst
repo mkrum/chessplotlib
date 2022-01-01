@@ -43,3 +43,22 @@ Then, you can add whatever else you would like using matplotlib,
     plt.show()
 
 .. image:: ../../examples/plotted.png
+
+pgn-viewer: A Simple PGN Viewer
+-------------------------------
+This library also comes with a simple, minimal PGN viewer, :code:`pgn-viewer`.
+This is a CLI tool to visualizing games from a PGN file in the terminal. Once
+you installled the package you can run:
+
+.. code-block:: console
+    
+    $ pgn-viewer <pgn file>
+
+
+This will start plotting the game move by move. You can move forward and
+backward in time with the arrow keys and quit with :code:`q`.  You can also
+run:
+
+.. code-block:: console
+    
+    $ pgn-viewer --help
