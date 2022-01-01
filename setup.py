@@ -9,7 +9,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     scripts=["bin/pgn-viewer"],
-    version="1.0.0",
+    version="1.0.1",
     packages=setuptools.find_packages(where="chessplotlib"),
     python_requires=">=3",
     install_requires=["matplotlib", "numpy", "chess"],
