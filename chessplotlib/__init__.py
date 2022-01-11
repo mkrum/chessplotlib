@@ -1,4 +1,4 @@
-from chessplotlib.plot import (
+from chessplotlib.base import (
     plot_board,
     plot_move,
     mark_square,
