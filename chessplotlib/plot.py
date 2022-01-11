@@ -23,9 +23,49 @@ SYMBOLS = {
 }
 
 
+def plot_blank_board(ax: plt.Axes, checkers: bool = True):
+    r"""
+    Creates a blank board plot on the specified axis.
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes to apply the board to.
+    checkers: bool, default=True
+        Whether or not to apply a checker pattern to the background.
+
+    Examples
+    --------
+    >>> from chessplotlib import plot_blank_board
+    >>> import matplotlib.pyplot as plt
+    >>> ax = plt.gca()
+    >>> plot_blank_board(ax)
+    >>> plt.show()
+
+    .. image:: ../../examples/blank.png
+
+    """
+    ax.set_xlim([-0.5, 7.5])
+    ax.set_ylim([7.5, -0.5])
+    for i in range(8):
+        ax.axhline(i - 0.5, 0, 8, color="black")
+        ax.axvline(i - 0.5, 0, 8, color="black")
+
+    ax.tick_params(labeltop=True, labelright=True, length=0)
+
+    ax.set_yticks(list(reversed(list(range(8)))))
+    ax.set_xticks(list(range(8)))
+
+    ax.set_yticklabels(("1", "2", "3", "4", "5", "6", "7", "8"))
+    ax.set_xticklabels(("a", "b", "c", "d", "e", "f", "g", "h"))
+
+    if checkers:
+        _make_checkers(ax)
+
+
 def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
     r"""
-    Creates a board image on the specified axis.
+    Plots the board position defined in the board object on the given axis.
 
     Parameters
     ----------
@@ -48,22 +88,7 @@ def plot_board(ax: plt.Axes, board: chess.Board, checkers: bool = True):
 
     .. image:: ../../examples/starting_board.png
     """
-    ax.set_xlim([-0.5, 7.5])
-    ax.set_ylim([7.5, -0.5])
-    for i in range(8):
-        ax.axhline(i - 0.5, 0, 8, color="black")
-        ax.axvline(i - 0.5, 0, 8, color="black")
-
-    ax.tick_params(labeltop=True, labelright=True, length=0)
-
-    ax.set_yticks(list(reversed(list(range(8)))))
-    ax.set_xticks(list(range(8)))
-
-    ax.set_yticklabels(("1", "2", "3", "4", "5", "6", "7", "8"))
-    ax.set_xticklabels(("a", "b", "c", "d", "e", "f", "g", "h"))
-
-    if checkers:
-        make_checkers(ax)
+    plot_blank_board(ax)
 
     X, Y = np.meshgrid(np.arange(8), np.arange(8))
     locs = np.stack([X.flatten(), Y.flatten()], axis=1)
@@ -166,15 +191,29 @@ def mark_square(ax: plt.Axes, square: str):
 
 
 def mark_move(ax: plt.Axes, move: chess.Move):
-    """
-    Marks the two squares used in a move
+    r"""
+    Marks the two squares used in a move.
 
     Parameters
     ----------
     ax: plt.Axes
         Axes containing the state of the board
     move: chess.Move
-        String name for square, (i.e. e1)
+        Move to visualize
+
+    Examples
+    --------
+    >>> import chess
+    >>> from chessplotlib import plot_board, mark_square
+    >>> import matplotlib.pyplot as plt
+    >>> board = chess.Board()
+    >>> move = chess.Move.from_uci("e1e2")
+    >>> ax = plt.gca()
+    >>> plot_board(ax, board)
+    >>> mark_move(ax, move)
+    >>> plt.show()
+
+    .. image:: ../../examples/starting_board_move_marked.png
     """
     from_square = _from_square(move)
     to_square, _ = _to_square(move)
@@ -183,25 +222,11 @@ def mark_move(ax: plt.Axes, move: chess.Move):
     mark_square(ax, to_square)
 
 
-def make_checkers(ax: plt.Axes):
-    """
-    Adds checkers to the board to make it look more natural
-
-    Parameters
-    ----------
-    ax: plt.Axes
-        Axes to add checkers to
-    """
-    X, Y = np.meshgrid(np.arange(8), np.arange(8))
-    checker = (((X + Y) % 2) + 0.3) / 2
-    ax.imshow(checker, cmap="Greys", vmax=1.0, vmin=0.0)
-
-
 def add_piece(
     ax: plt.Axes, square: str, piece: str, alpha: float = 1.0, color: str = "black"
 ):
-    """
-    Adds a pieces to the board.
+    r"""
+    Adds a piece to the board.
 
     Adds the piece, `piece`, at location square on axes ax.
 
@@ -217,6 +242,18 @@ def add_piece(
         Alpha for the piece, controls piece visibility
     color: str
         black or white, controls the color of the piece
+
+    Examples
+    --------
+    >>> from chessplotlib import plot_blank_board, add_piece
+    >>> import matplotlib.pyplot as plt
+    >>> ax = plt.gca()
+    >>> plot_blank_board(ax)
+    >>> add_piece(ax, 'e4', 'K')
+    >>> add_piece(ax, 'g5', 'q', color='red', alpha=0.25)
+    >>> plt.show()
+
+    .. image:: ../../examples/blank_added_pieces.png
     """
     x, y = _square_to_grid(square)
     ax.text(
@@ -238,7 +275,7 @@ def add_arrow(
     alpha=1.0,
     color="black",
 ):
-    """
+    r"""
     Adds an arrow from one square to the next
 
     Draws an arrow connecting two squares together. Can be used to represent
@@ -256,6 +293,17 @@ def add_arrow(
         Alpha for the piece, controls piece visibility.
     color: str
         Controls the color of the piece, typically black or white.
+
+    Examples
+    --------
+    >>> from chessplotlib import plot_blank_board, add_arrow
+    >>> import matplotlib.pyplot as plt
+    >>> ax = plt.gca()
+    >>> plot_blank_board(ax)
+    >>> add_arrow(ax, 'e4', 'g5', color='blue')
+    >>> plt.show()
+
+    .. image:: ../../examples/blank_with_line.png
     """
     from_x, from_y = _square_to_grid(from_square)
     to_x, to_y = _square_to_grid(to_square)
@@ -271,6 +319,15 @@ def add_arrow(
         head_width=0.15,
         length_includes_head=True,
     )
+
+
+def _make_checkers(ax: plt.Axes):
+    """
+    Adds checkers to the board to make it look more natural
+    """
+    X, Y = np.meshgrid(np.arange(8), np.arange(8))
+    checker = (((X + Y) % 2) + 0.3) / 2
+    ax.imshow(checker, cmap="Greys", vmax=1.0, vmin=0.0)
 
 
 def _from_square(move: chess.Move) -> str:

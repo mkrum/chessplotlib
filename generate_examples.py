@@ -7,7 +7,15 @@ import shutil
 import chess
 import numpy as np
 import matplotlib.pyplot as plt
-from chessplotlib import plot_board, plot_move, mark_move, mark_square
+from chessplotlib import (
+    plot_board,
+    plot_move,
+    mark_move,
+    mark_square,
+    plot_blank_board,
+    add_piece,
+    add_arrow,
+)
 
 with open("test/boards.txt", "r") as bf:
     board_fens = [l.rstrip() for l in bf.readlines()]
@@ -27,14 +35,33 @@ for (i, (board_fen, move_uci)) in enumerate(zip(board_fens, move_ucis)):
     plt.savefig(f"./test/baseline/marked_move_{i}.png")
     plt.cla()
 
+plt.cla()
+ax = plt.gca()
+plot_blank_board(ax)
+plt.savefig(f"./examples/blank.png", transparent=True)
+add_piece(ax, "e4", "K")
+add_piece(ax, "g5", "q", color="red", alpha=0.25)
+
+plt.cla()
+ax = plt.gca()
+plot_blank_board(ax)
+add_arrow(ax, "e4", "g5", color="blue")
+plt.savefig(f"./examples/blank_with_line.png", transparent=True)
+
 starting_board = board_fens[0]
 opening_move = chess.Move.from_uci(move_ucis[0])
 board = chess.Board(starting_board)
+
+plt.cla()
 ax = plt.gca()
 plot_board(ax, board)
 plt.savefig(f"./examples/starting_board.png", transparent=True)
 mark_square(ax, "e2")
 plt.savefig(f"./examples/starting_board_marked.png", transparent=True)
+
+move = chess.Move.from_uci("e2e4")
+mark_move(ax, move)
+plt.savefig(f"./examples/starting_board_move_marked.png", transparent=True)
 
 plt.cla()
 ax = plt.gca()
