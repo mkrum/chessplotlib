@@ -6,4 +6,5 @@ from chessplotlib.base import (
     plot_blank_board,
     add_piece,
     add_arrow,
+    color_square,
 )

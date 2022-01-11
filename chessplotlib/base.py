@@ -153,7 +153,7 @@ def plot_move(
 
 def mark_square(ax: plt.Axes, square: str):
     r"""
-    Highlights a square in red.
+    Highlights a square in a red outline.
 
     Parameters
     ----------
@@ -185,6 +185,46 @@ def mark_square(ax: plt.Axes, square: str):
         edgecolor="r",
         facecolor="none",
         zorder=3,
+    )
+
+    # Add the patch to the Axes
+    ax.add_patch(rect)
+
+
+def color_square(ax: plt.Axes, square: str, color: str, alpha: float = 1.0):
+    r"""
+    Fills in a square with a particular color
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axes containing the state of the board
+    square: str
+        String name for square, (i.e. e1)
+
+    Examples
+    --------
+    >>> import chess
+    >>> from chessplotlib import plot_board, color_square
+    >>> import matplotlib.pyplot as plt
+    >>> board = chess.Board()
+    >>> plot_board(ax, board)
+    >>> color_square(ax, "e4", "blue")
+    >>> color_square(ax, "a1", "green")
+    >>> color_square(ax, "f8", "red")
+    >>> plt.show()
+
+    .. image:: ../../examples/colored_squares.png
+    """
+    row, col = _square_to_grid(square)
+
+    rect = patches.Rectangle(
+        (row - 0.5, col - 0.5),
+        1.0,
+        1.0,
+        linewidth=2,
+        facecolor=color,
+        zorder=0,
     )
 
     # Add the patch to the Axes

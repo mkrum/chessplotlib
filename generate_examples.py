@@ -12,6 +12,7 @@ from chessplotlib import (
     plot_blank_board,
     add_piece,
     add_arrow,
+    color_square,
 )
 
 
@@ -106,3 +107,14 @@ def test_mark_move_example():
     move = chess.Move.from_uci("e2e4")
     mark_move(ax, move)
     plt.savefig(f"./examples/starting_board_move_marked.png", transparent=True)
+
+
+def test_color_square_example():
+    plt.cla()
+    ax = plt.gca()
+    board = chess.Board()
+    plot_board(ax, board)
+    color_square(ax, "e4", color="blue")
+    color_square(ax, "a1", color="green")
+    color_square(ax, "f8", color="red")
+    plt.savefig(f"./examples/colored_squares.png", transparent=True)
