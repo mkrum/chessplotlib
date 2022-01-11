@@ -128,9 +128,10 @@ def plot_move(
     >>> from chessplotlib import plot_board, plot_move
     >>> import matplotlib.pyplot as plt
     >>> board = chess.Board()
+    >>> move = chess.Move.from_uci("e2e4")
     >>> ax = plt.gca()
     >>> plot_board(ax, board)
-    >>> plot_move(ax, board, "e2e4")
+    >>> plot_move(ax, board, move)
     >>> plt.show()
 
     .. image:: ../../examples/opening_move.png
@@ -207,7 +208,7 @@ def mark_move(ax: plt.Axes, move: chess.Move):
     >>> from chessplotlib import plot_board, mark_square
     >>> import matplotlib.pyplot as plt
     >>> board = chess.Board()
-    >>> move = chess.Move.from_uci("e1e2")
+    >>> move = chess.Move.from_uci("e2e4")
     >>> ax = plt.gca()
     >>> plot_board(ax, board)
     >>> mark_move(ax, move)
@@ -307,6 +308,11 @@ def add_arrow(
     """
     from_x, from_y = _square_to_grid(from_square)
     to_x, to_y = _square_to_grid(to_square)
+
+    # Not sure why this delta is need, but the arrows appear clearly off-center
+    # otherwise.
+    from_x += 0.02
+    to_x += 0.02
 
     ax.arrow(
         from_x,

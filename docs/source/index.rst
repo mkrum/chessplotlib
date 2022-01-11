@@ -6,7 +6,7 @@
 .. toctree::
     about
     install
-    api
+    base 
 
 Indices and tables
 ==================
