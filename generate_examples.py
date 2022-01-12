@@ -14,6 +14,7 @@ from chessplotlib import (
     add_arrow,
     color_square,
 )
+import chessplotlib.test_utils as TU
 
 
 def test_examples():
@@ -24,97 +25,44 @@ def test_examples():
         move_ucis = [l.rstrip() for l in mf.readlines()]
 
     for (i, (board_fen, move_uci)) in enumerate(zip(board_fens, move_ucis)):
-        board = chess.Board(board_fen)
-        move = chess.Move.from_uci(move_uci)
-        ax = plt.gca()
-        plot_board(ax, board)
-        plt.savefig(f"./test/baseline/board_{i}.png")
-        plot_move(ax, board, move)
-        plt.savefig(f"./test/baseline/move_{i}.png")
-        mark_move(ax, move)
-        plt.savefig(f"./test/baseline/marked_move_{i}.png")
-        plt.cla()
+        TU.board_example(f"./examples/baseline/board_{i}.png", board_fen)
+        TU.move_example(f"./examples/baseline/move_{i}.png", board_fen, move_uci)
+        TU.mark_move_example(f"./examples/baseline/marked_move_{i}.png", board_fen, move_uci)
 
 
 def test_blank_board_example():
-    plt.cla()
-    ax = plt.gca()
-    plot_blank_board(ax)
-    plt.savefig(f"./examples/blank.png", transparent=True)
+    TU.blank_board_example("./examples/blank.png")
 
 
 def test_add_piece_example():
-    plt.cla()
-    ax = plt.gca()
-    plot_blank_board(ax)
-    add_piece(ax, "e4", "K")
-    add_piece(ax, "g5", "q", color="red", alpha=0.25)
-    plt.savefig(f"./examples/blank_added_pieces.png", transparent=True)
+    TU.add_piece_example("./examples/blank_added_pieces.png")
 
 
 def test_add_arrow_example():
-    plt.cla()
-    ax = plt.gca()
-    plot_blank_board(ax)
-    add_arrow(ax, "e4", "g5", color="blue")
-    plt.savefig(f"./examples/blank_with_line.png", transparent=True)
-
+    TU.add_arrow_example("./examples/blank_with_line.png")
 
 def test_starting_board_example():
-    plt.cla()
-    ax = plt.gca()
     board = chess.Board()
-    plot_board(ax, board)
-    plt.savefig(f"./examples/starting_board.png", transparent=True)
-
+    board_fen = board.fen()
+    TU.board_example("./examples/starting_board.png", board_fen)
 
 def test_opening_move_example():
-    plt.cla()
-    ax = plt.gca()
     board = chess.Board()
-    move = chess.Move.from_uci("e2e4")
-    plot_board(ax, board)
-    plot_move(ax, board, move)
-    plt.savefig(f"./examples/opening_move.png", transparent=True)
-
+    board_fen = board.fen()
+    move_uci = "e2e4"
+    TU.move_example("./examples/opening_move.png", board_fen, move_uci)
 
 def test_mark_square_example():
-    plt.cla()
-    ax = plt.gca()
-    board = chess.Board()
-    plot_board(ax, board)
-    mark_square(ax, "e2")
-    plt.savefig(f"./examples/starting_board_marked.png", transparent=True)
-
+    TU.mark_square_example("./examples/starting_board_marked.png")
 
 def test_plotting_example():
-    plt.cla()
-    ax = plt.gca()
-    board = chess.Board()
-    opening_move = chess.Move.from_uci("e2e4")
-    plot_board(ax, board)
-    plot_move(ax, board, opening_move)
-    plt.plot(range(8), [2, 3, 2, 3, 2, 3, 2, 3])
-    ax.text(0, 4, "chessplotlib", color="red")
-    plt.savefig(f"./examples/plotted.png", transparent=True)
-
+    TU.plotting_example("./examples/plotted.png")
 
 def test_mark_move_example():
-    plt.cla()
-    ax = plt.gca()
     board = chess.Board()
-    plot_board(ax, board)
-    move = chess.Move.from_uci("e2e4")
-    mark_move(ax, move)
-    plt.savefig(f"./examples/starting_board_move_marked.png", transparent=True)
-
+    board_fen = board.fen()
+    move_uci = "e2e4"
+    TU.mark_move_example("./examples/starting_board_move_marked.png", board_fen, move_uci)
 
 def test_color_square_example():
-    plt.cla()
-    ax = plt.gca()
-    board = chess.Board()
-    plot_board(ax, board)
-    color_square(ax, "e4", color="blue")
-    color_square(ax, "a1", color="green")
-    color_square(ax, "f8", color="red")
-    plt.savefig(f"./examples/colored_squares.png", transparent=True)
+    TU.color_square_example("./examples/colored_squares.png")
